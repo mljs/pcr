@@ -1,0 +1,40 @@
+{
+  "name": "ml-pcr",
+  "version": "1.0.0",
+  "description": "Principal component regression",
+  "main": "pcr.js",
+  "module": "src/pcr.js",
+  "files": [
+    "pca.js",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mljs/pcr.git"
+  },
+  "keywords": [
+    "mlr",
+    "principal",
+    "component",
+    "linear",
+    "regression",
+    "data",
+    "mining",
+    "datamining",
+    "machine",
+    "learning"
+  ],
+  "author": "Javier Osorio",
+  "license": "MIT",
+  "dependencies": {
+    "ml-matrix": "^6.0.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.4.3",
+    "eslint": "^5.16.0",
+    "eslint-config-cheminfo": "^1.20.1",
+    "eslint-plugin-import": "^2.17.2",
+    "ml-dataset-iris": "^1.0.0",
+    "rollup": "^1.10.0"
+  }
+}
