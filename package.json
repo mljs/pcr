@@ -1,0 +1,55 @@
+{
+  "name": "pcr",
+  "version": "1.0.0",
+  "description": "Principal Component Regression",
+  "module": "src/pcr.js",
+  "sideEffects": false,
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "compile": "rollup -c",
+    "eslint": "eslint src data",
+    "eslint-fix": "npm run eslint -- --fix",
+    "prepublishOnly": "npm run compile",
+    "test": "npm run test-coverage && npm run eslint",
+    "test-only": "jest",
+    "test-coverage": "jest --coverage"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_shasum": "6a3240c59dabffd7c0132c879fefdc7b0f8b98db",
+  "_spec": "mlr",
+  "_where": "/Users/Josorio/Documents/Cheminfo/debug",
+  "author": {
+    "name": "Javier Osorio"
+  },
+  "bugs": {},
+  "bundleDependencies": true,
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.4.4",
+    "eslint": "^5.16.0",
+    "eslint-config-cheminfo": "^1.20.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jest": "^22.5.1",
+    "jest": "^24.8.0",
+    "rollup": "^1.10.1"
+  },
+  "dependencies": {
+    "ml-matrix": "^5.3.0",
+    "ml-pca": "^3.0.0",
+    "ml-regression-multivariate-linear": "^2.0.0"
+  },
+  "deprecated": false,
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "license": "MIT",
+  "main": "src/pcr.js"
+}
