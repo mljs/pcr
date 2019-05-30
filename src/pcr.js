@@ -63,17 +63,18 @@ class PCR {
     }
     let coefficientsData = new Matrix(coefficients);
     this.coefficients = coefficientsData.transpose();
+    
     if (this.intercept === true) {
       predictorsMatrix.addColumn(0, new Array(predictor.length).fill(1));
     }
-    let prediction = predictorsMatrix.mmul(coefficientsData.transpose());
-    this.prediction = prediction;
+    let yFittedValues = predictorsMatrix.mmul(coefficientsData.transpose());
+    this.yFittedValues = yFittedValues;
 
     let residual = [];
     for (let j = 0; j < response.length; j++) {
       let g = [];
       for (let k = 0; k < response[0].length; k++) {
-        g.push(response[j][k] - prediction[j][k]);
+        g.push(response[j][k] - yFittedValues[j][k]);
       }
       residual.push(g);
       g = [];
@@ -101,7 +102,7 @@ class PCR {
     let yVariance = [];
     let stdDeviationY = [];
     for (let i = 0; i < response.length; i++) {
-      ssr.push(prediction[i].map((x) => Math.pow(x - yMedia[i], 2))
+      ssr.push(yFittedValues[i].map((x) => Math.pow(x - yMedia[i], 2))
         .reduce((a, b) => a + b));
       yVariance.push(ssr[i] / (response[0].length - 1));
       stdDeviationY.push(Math.sqrt(yVariance[i]));
@@ -149,7 +150,7 @@ class PCR {
 
   /**
   * Predict y-values for a given x
-  * @returns {[Matrix]}
+  * @returns {[Array]}
   */
   predict(x) {
     const result = [];
@@ -168,7 +169,7 @@ class PCR {
   }
 
   /**
-  * Returns the regression coefficients
+  * Returns some basic statistics of the regression
   * @returns {[Array]}
   */
   getStatistic() {
@@ -176,11 +177,11 @@ class PCR {
   }
 
   /**
-  * Returns the regression coefficients
+  * Returns fitted values of Y
   * @returns {[Array]}
   */
-  getPrediction() {
-    return this.prediction;
+  getFittedValuesY() {
+    return this.yFittedValues;
   }
 
   /**
@@ -192,8 +193,8 @@ class PCR {
   }
 
   /**
-  * Returns the number of principal components used
-  * @returns {[number]}
+  * Returns the scores for principal components
+  * @returns {[Object]}
   */
   getLoadingsdata() {
     return this.loadingsData;
