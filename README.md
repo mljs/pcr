@@ -38,7 +38,6 @@ console.log(pcr.getLoadingsdata()); // Returns the information of loadings used 
     component: [ [Array] ]
   }
 ]
-console.log(pcr.getStatistic());
 */
 ```
 
