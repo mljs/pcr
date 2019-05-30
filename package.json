@@ -1,6 +1,6 @@
 {
-  "name": "pcr",
-  "version": "1.0.0",
+  "name": "ml-pcr",
+  "version": "0.0.1",
   "description": "Principal Component Regression",
   "module": "src/pcr.js",
   "sideEffects": false,
@@ -43,7 +43,6 @@
   "dependencies": {
     "ml-matrix": "^5.3.0",
     "ml-pca": "^3.0.0",
-    "pcr": "^1.0.0",
     "ml-regression-multivariate-linear": "^2.0.0"
   },
   "deprecated": false,
