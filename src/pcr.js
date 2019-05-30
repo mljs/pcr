@@ -26,7 +26,7 @@ class PCR {
     }
     let pca = new PCA(predictor);
     let evalues = pca.getEigenvalues();
-    // this bucle find the principal components that has x percent value
+
     const sum = evalues.reduce((a, b) => a + b, 0);
     const weigth = evalues.map((x, i) => ({ weigth: (x / sum) * 100, evalues: evalues[i], componentNumber: i + 1 }));
     weigth.sort((a, b) => a.weigth < b.weigth);
@@ -35,7 +35,7 @@ class PCR {
       l = weigth[n].weigth; n++; z = z + l;
     }
     let predictorsMatrix = new Matrix(predictor);
-    // this bucle find the liner regression coefficients in therms of principal components choosed
+    
     const loadings = new Matrix(pca.getLoadings().data.slice(0, n));
     this.loadingsData = loadings.map((x, i) => ({ weigth: (evalues[i] / sum) * 100, evalues: evalues[i], componentNumber: i + 1, component: pca.getLoadings().data.slice(i, i + 1) }));
     let scores = predictorsMatrix.mmul(loadings.transpose());
