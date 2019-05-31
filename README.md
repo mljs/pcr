@@ -50,5 +50,5 @@ console.log(pcr.getLoadingsdata()); // Returns the information of loadings used 
 
 ## License
 
-## Referencies
+## References
 * 
