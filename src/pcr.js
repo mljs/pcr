@@ -39,7 +39,7 @@ class PCR {
     let n = 0;
     let z = 0;
     let l = 0;
-    while (z < this.pcaWeight) {
+    while (z < this.pcaWeight * 100) {
       l = weight[n].weight;
       n++;
       z = z + l;
