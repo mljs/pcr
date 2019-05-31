@@ -15,12 +15,16 @@ const Matrix = matrixLib.Matrix;
  * */
 
 class PCR {
-  constructor(predictor, response, intercept, pcaWeight) {
+  constructor(predictor, response, options = {}) {
+    const { intercept = true, pcaWeight = 1 } = options;
     this.intercept = intercept;
-    if (!pcaWeight) {
-      pcaWeight = 100;
-    } else if (!intercept) {
-      intercept = true;
+    if (intercept) {
+      this.intercept = intercept;
+    }
+    if (pcaWeight) {
+      this.pcaWeight = pcaWeight;
+    } else {
+      this.pcaWeight = 1;
     }
     let pca = new PCA(predictor);
     let evalues = pca.getEigenvalues();
@@ -35,7 +39,7 @@ class PCR {
     let n = 0;
     let z = 0;
     let l = 0;
-    while (z < pcaWeight) {
+    while (z < this.pcaWeight) {
       l = weight[n].weight;
       n++;
       z = z + l;
