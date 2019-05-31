@@ -7,10 +7,10 @@ const PCA = require('ml-pca').PCA;
 const Matrix = matrixLib.Matrix;
 
 /**
- * Creates new MLR (Multiple Linear Regression)
+ * Creates new PCR (Principal component regression)
  * @param {Array} predictor - matrix with predictor variables. (Each column is an array)
  * @param {Array} response - matrix with response variables. (Each column is an array)
- * @param {number} pcaWeight - percentage to choose the principal components
+ * @param {number} pcaWeight - Weight to choose the principal components. It refers to the weight that components must sum with each other (in percent) to perform the regression.
  * @param {boolean} intercept - Intercept
  * */
 
@@ -26,17 +26,17 @@ class PCR {
     let evalues = pca.getEigenvalues();
 
     const sum = evalues.reduce((a, b) => a + b, 0);
-    const weigth = evalues.map((x, i) => ({
-      weigth: (x / sum) * 100,
+    const weight = evalues.map((x, i) => ({
+      weight: (x / sum) * 100,
       evalues: evalues[i],
       componentNumber: i + 1
     }));
-    weigth.sort((a, b) => a.weigth < b.weigth);
+    weight.sort((a, b) => a.weight < b.weight);
     let n = 0;
     let z = 0;
     let l = 0;
     while (z < pcaWeight) {
-      l = weigth[n].weigth;
+      l = weight[n].weight;
       n++;
       z = z + l;
     }
@@ -44,7 +44,7 @@ class PCR {
 
     const loadings = new Matrix(pca.getLoadings().data.slice(0, n));
     this.loadingsData = loadings.map((x, i) => ({
-      weigth: (evalues[i] / sum) * 100,
+      weight: (evalues[i] / sum) * 100,
       evalues: evalues[i],
       componentNumber: i + 1,
       component: pca.getLoadings().data.slice(i, i + 1)
