@@ -4,14 +4,14 @@
 
 // import MLR from '..';
 
-var MLR = require('ml-regression-multivariate-linear');
+const MLR = require('ml-regression-multivariate-linear');
 
-var PCR = require('../src/pcr');
+const PCR = require('..');
 
 // *******************************************
 // Example -->  Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry. pp(238-243)
 
-var response = [
+const response = [
   [0.89, 0.02, 0.01],
   [0.46, 0.09, 0.24],
   [0.45, 0.16, 0.23],
@@ -24,7 +24,7 @@ var response = [
   [0.48, 0.15, 0.06]
 ];
 
-var predictor = [
+const predictor = [
   [18.7, 26.8, 42.1, 56.6, 70.0, 83.2],
   [31.3, 33.4, 45.7, 49.3, 53.8, 55.3],
   [30.0, 35.1, 48.3, 53.5, 59.2, 57.7],
