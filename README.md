@@ -20,7 +20,7 @@ Principal component regression.
 
 ```js
 
-const PCR = require('./pcr');
+const PCR = require('pcr');
 
 const x = [[0, 0], [1, 2], [2, 3], [3, 4]];
 
