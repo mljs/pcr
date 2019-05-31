@@ -1,9 +1,5 @@
 'use strict';
 
-// import PCR from '..';
-
-// import MLR from '..';
-
 const MLR = require('ml-regression-multivariate-linear');
 
 const PCR = require('..');
