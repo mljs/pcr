@@ -1,3 +1,7 @@
+## PCR
+
+Principal component regression.
+
 ## API
 
 ### new PCR(x, y, intercept, weight)
@@ -6,8 +10,11 @@
 
 * `x`: Matrix containing the inputs.
 * `y`: Matrix containing the outputs.
+
+**Options**
+
 * `intercept`: boolean indicating if intercept terms should be computed.
-* `weight`: number (0 - 100): It refers to the weight that components must sum with each other (in percent) to perform the regression. When this is 100%, pcr perform a multiple linear regression.
+* `weight`: number (0 - 1): It refers to the weight that components must sum with each otherto perform the regression. When this is exactly 1, pcr perform a multiple linear regression.
 
 ## Usage
 
@@ -19,7 +26,7 @@ const x = [[0, 0], [1, 2], [2, 3], [3, 4]];
 
 const y = [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]];
 
-const pcr = new PCR(x, y, true, 100);
+const pcr = new PCR(x, y, { intercept: true, weight: 1 });
 console.log(pcr.predict([3, 3])); // Predict Y for an given X
 // [6, 6, 6]
 
