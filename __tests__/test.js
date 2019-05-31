@@ -1,12 +1,12 @@
 'use strict';
 
-//import PCR from '..';
+// import PCR from '..';
 
-//import MLR from '..';
+// import MLR from '..';
 
-var PCR = require('../src/pcr');
 var MLR = require('ml-regression-multivariate-linear');
 
+var PCR = require('../src/pcr');
 
 // *******************************************
 // Example -->  Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry. pp(238-243)
@@ -19,7 +19,7 @@ var response = [
   [0.56, 0.09, 0.09],
   [0.41, 0.02, 0.28],
   [0.44, 0.17, 0.14],
-  [0.34, 0.23, 0.20],
+  [0.34, 0.23, 0.2],
   [0.74, 0.11, 0.01],
   [0.75, 0.01, 0.15],
   [0.48, 0.15, 0.06]
@@ -35,7 +35,7 @@ var predictor = [
   [25.7, 31.4, 41.1, 50.6, 53.5, 49.3],
   [18.7, 26.8, 37.8, 50.6, 65.0, 72.3],
   [27.3, 34.6, 47.8, 55.9, 67.9, 75.2],
-  [18.3, 22.8, 32.8, 43.4, 49.6, 51.1],
+  [18.3, 22.8, 32.8, 43.4, 49.6, 51.1]
 ];
 
 // *******************************************
@@ -55,10 +55,10 @@ describe('principal component regression', () => {
       false,
       100
     );
-    expect(mlr.predict([2, 3]).map(Math.round)).toEqual([4, 6, 5]);
-    expect(mlr.predict([4, 4]).map(Math.round)).toEqual([8, 8, 8]);
-    expect(pcr.predict([2, 3]).map(Math.round)).toEqual([4, 6, 5]);
-    expect(pcr.predict([4, 4]).map(Math.round)).toEqual([8, 8, 8]);
+    expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
+    expect(mlr.predict([4, 4]).map(Math.round)).toStrictEqual([8, 8, 8]);
+    expect(pcr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
+    expect(pcr.predict([4, 4]).map(Math.round)).toStrictEqual([8, 8, 8]);
   });
 
   it('should work with 2 inputs and 3 outputs - intercept is 0', () => {
@@ -76,12 +76,11 @@ describe('principal component regression', () => {
       100
     );
 
-    expect(mlr.predict([2, 3]).map(Math.round)).toEqual([4, 6, 5]);
-    expect(mlr.predict([4, 4]).map(Math.round)).toEqual([8, 8, 8]);
-    expect(pcr.predict([2, 3]).map(Math.round)).toEqual([4, 6, 5]);
-    expect(pcr.predict([4, 4]).map(Math.round)).toEqual([8, 8, 8]);
+    expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
+    expect(mlr.predict([4, 4]).map(Math.round)).toStrictEqual([8, 8, 8]);
+    expect(pcr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
+    expect(pcr.predict([4, 4]).map(Math.round)).toStrictEqual([8, 8, 8]);
   });
-
 
   it('should work with 2 inputs and 3 outputs - intercept is not 0', () => {
     const mlr = new MLR(
@@ -97,10 +96,10 @@ describe('principal component regression', () => {
       true,
       100
     );
-    expect(pcr.predict([2, 3]).map(Math.round)).toEqual([3, 8, 15]);
-    expect(pcr.predict([4, 4]).map(Math.round)).toEqual([7, 10, 18]);
-    expect(mlr.predict([2, 3]).map(Math.round)).toEqual([3, 8, 15]);
-    expect(mlr.predict([4, 4]).map(Math.round)).toEqual([7, 10, 18]);
+    expect(pcr.predict([2, 3]).map(Math.round)).toStrictEqual([3, 8, 15]);
+    expect(pcr.predict([4, 4]).map(Math.round)).toStrictEqual([7, 10, 18]);
+    expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([3, 8, 15]);
+    expect(mlr.predict([4, 4]).map(Math.round)).toStrictEqual([7, 10, 18]);
   });
 
   it('Loadings data', () => {
@@ -109,17 +108,17 @@ describe('principal component regression', () => {
 
     const loadings = pcr.getLoadingsdata();
 
-    expect(loadings.length).toEqual(3);
+    expect(loadings).toHaveLength(3);
     // First component eigenvalue and the weigth in the regression.
-    expect(Math.round(loadings[0].evalues)).toEqual(210);
-    expect(Math.round(loadings[0].weigth)).toEqual(72);
+    expect(Math.round(loadings[0].evalues)).toStrictEqual(210);
+    expect(Math.round(loadings[0].weigth)).toStrictEqual(72);
 
     // Second component eigenvalue and the weigth in the regression.
-    expect(Math.round(loadings[1].evalues)).toEqual(74);
-    expect(Math.round(loadings[1].weigth)).toEqual(25);
+    expect(Math.round(loadings[1].evalues)).toStrictEqual(74);
+    expect(Math.round(loadings[1].weigth)).toStrictEqual(25);
 
     // Third component eigenvalue and the weigth in the regression.
-    expect(Math.round(loadings[2].evalues)).toEqual(5);
-    expect(Math.round(loadings[2].weigth)).toEqual(2);
+    expect(Math.round(loadings[2].evalues)).toStrictEqual(5);
+    expect(Math.round(loadings[2].weigth)).toStrictEqual(2);
   });
 });
