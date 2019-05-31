@@ -10,7 +10,6 @@ var PCR = require('../src/pcr');
 
 // *******************************************
 // Example -->  Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry. pp(238-243)
-// dataset contains all the information for a multivariate problem, their three first columns corresponds to concentrations and the rest 6 columns corresponds to the absorbances for a UV experiment.
 
 var response = [
   [0.89, 0.02, 0.01],
