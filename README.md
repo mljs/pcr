@@ -1,4 +1,4 @@
-## PCR
+# PCR
 
 Principal component regression.
 
