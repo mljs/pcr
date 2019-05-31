@@ -4,7 +4,7 @@ Principal component regression.
 
 ## API
 
-### new PCR(x, y, intercept, weight)
+### new PCR(x, y, {options})
 
 **Arguments**
 
