@@ -51,9 +51,7 @@ describe('principal component regression', () => {
     const pcr = new PCR(
       [[0, 0], [1, 2], [2, 3], [3, 4]],
       // y0 = 2 * x0, y1 = 2 * x1, y2 = x0 + x1
-      [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]],
-      false,
-      100
+      [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]]
     );
     expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
     expect(mlr.predict([4, 4]).map(Math.round)).toStrictEqual([8, 8, 8]);
@@ -72,8 +70,7 @@ describe('principal component regression', () => {
       [[0, 0], [1, 2], [2, 3], [3, 4]],
       // y0 = 2 * x0, y1 = 2 * x1, y2 = x0 + x1
       [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]],
-      true,
-      100
+      { intercept: true}
     );
 
     expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
@@ -93,8 +90,7 @@ describe('principal component regression', () => {
       [[0, 0], [1, 2], [2, 3], [3, 4]],
       // y0 = 2 * x0 -1, y1 = 2 * x1 + 2, y2 = x0 + x1 + 10
       [[-1, 2, 10], [1, 6, 13], [3, 8, 15], [5, 10, 17]],
-      true,
-      100
+      { intercept: true}
     );
     expect(pcr.predict([2, 3]).map(Math.round)).toStrictEqual([3, 8, 15]);
     expect(pcr.predict([4, 4]).map(Math.round)).toStrictEqual([7, 10, 18]);
@@ -104,21 +100,21 @@ describe('principal component regression', () => {
 
   it('Loadings data', () => {
     // Last argument refers to the weight that components must sum with each other (in percent) to perform the regression
-    const pcr = new PCR(predictor, response, true, 99);
+    const pcr = new PCR(predictor, response, { intercept: true, pcaWeight: 0.99 });
 
     const loadings = pcr.getLoadingsdata();
 
     expect(loadings).toHaveLength(3);
     // First component eigenvalue and the weigth in the regression.
     expect(Math.round(loadings[0].evalues)).toStrictEqual(210);
-    expect(Math.round(loadings[0].weigth)).toStrictEqual(72);
+    expect(Math.round(loadings[0].weight)).toStrictEqual(72);
 
     // Second component eigenvalue and the weigth in the regression.
     expect(Math.round(loadings[1].evalues)).toStrictEqual(74);
-    expect(Math.round(loadings[1].weigth)).toStrictEqual(25);
+    expect(Math.round(loadings[1].weight)).toStrictEqual(25);
 
     // Third component eigenvalue and the weigth in the regression.
     expect(Math.round(loadings[2].evalues)).toStrictEqual(5);
-    expect(Math.round(loadings[2].weigth)).toStrictEqual(2);
+    expect(Math.round(loadings[2].weight)).toStrictEqual(2);
   });
 });
