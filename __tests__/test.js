@@ -17,7 +17,7 @@ const response = [
   [0.34, 0.23, 0.2],
   [0.74, 0.11, 0.01],
   [0.75, 0.01, 0.15],
-  [0.48, 0.15, 0.06]
+  [0.48, 0.15, 0.06],
 ];
 
 const predictor = [
@@ -30,7 +30,7 @@ const predictor = [
   [25.7, 31.4, 41.1, 50.6, 53.5, 49.3],
   [18.7, 26.8, 37.8, 50.6, 65.0, 72.3],
   [27.3, 34.6, 47.8, 55.9, 67.9, 75.2],
-  [18.3, 22.8, 32.8, 43.4, 49.6, 51.1]
+  [18.3, 22.8, 32.8, 43.4, 49.6, 51.1],
 ];
 
 // *******************************************
@@ -38,15 +38,35 @@ const predictor = [
 describe('principal component regression', () => {
   it('should work with 2 inputs and 3 outputs', () => {
     const mlr = new MLR(
-      [[0, 0], [1, 2], [2, 3], [3, 4]],
+      [
+        [0, 0],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+      ],
       // y0 = 2 * x0, y1 = 2 * x1, y2 = x0 + x1
-      [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]]
+      [
+        [0, 0, 0],
+        [2, 4, 3],
+        [4, 6, 5],
+        [6, 8, 7],
+      ],
     );
 
     const pcr = new PCR(
-      [[0, 0], [1, 2], [2, 3], [3, 4]],
+      [
+        [0, 0],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+      ],
       // y0 = 2 * x0, y1 = 2 * x1, y2 = x0 + x1
-      [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]]
+      [
+        [0, 0, 0],
+        [2, 4, 3],
+        [4, 6, 5],
+        [6, 8, 7],
+      ],
     );
     expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
     expect(mlr.predict([4, 4]).map(Math.round)).toStrictEqual([8, 8, 8]);
@@ -56,16 +76,36 @@ describe('principal component regression', () => {
 
   it('should work with 2 inputs and 3 outputs - intercept is 0', () => {
     const mlr = new MLR(
-      [[0, 0], [1, 2], [2, 3], [3, 4]],
+      [
+        [0, 0],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+      ],
       // y0 = 2 * x0, y1 = 2 * x1, y2 = x0 + x1
-      [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]],
-      { intercept: true }
+      [
+        [0, 0, 0],
+        [2, 4, 3],
+        [4, 6, 5],
+        [6, 8, 7],
+      ],
+      { intercept: true },
     );
     const pcr = new PCR(
-      [[0, 0], [1, 2], [2, 3], [3, 4]],
+      [
+        [0, 0],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+      ],
       // y0 = 2 * x0, y1 = 2 * x1, y2 = x0 + x1
-      [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]],
-      { intercept: true}
+      [
+        [0, 0, 0],
+        [2, 4, 3],
+        [4, 6, 5],
+        [6, 8, 7],
+      ],
+      { intercept: true },
     );
 
     expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([4, 6, 5]);
@@ -76,26 +116,49 @@ describe('principal component regression', () => {
 
   it('should work with 2 inputs and 3 outputs - intercept is not 0', () => {
     const mlr = new MLR(
-      [[0, 0], [1, 2], [2, 3], [3, 4]],
+      [
+        [0, 0],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+      ],
       // y0 = 2 * x0 -1, y1 = 2 * x1 + 2, y2 = x0 + x1 + 10
-      [[-1, 2, 10], [1, 6, 13], [3, 8, 15], [5, 10, 17]],
-      { intercept: true }
+      [
+        [-1, 2, 10],
+        [1, 6, 13],
+        [3, 8, 15],
+        [5, 10, 17],
+      ],
+      { intercept: true },
     );
     const pcr = new PCR(
-      [[0, 0], [1, 2], [2, 3], [3, 4]],
+      [
+        [0, 0],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+      ],
       // y0 = 2 * x0 -1, y1 = 2 * x1 + 2, y2 = x0 + x1 + 10
-      [[-1, 2, 10], [1, 6, 13], [3, 8, 15], [5, 10, 17]],
-      { intercept: true}
+      [
+        [-1, 2, 10],
+        [1, 6, 13],
+        [3, 8, 15],
+        [5, 10, 17],
+      ],
+      { intercept: true },
     );
-    expect(pcr.predict([2, 3]).map(Math.round)).toStrictEqual([3, 8, 15]);
-    expect(pcr.predict([4, 4]).map(Math.round)).toStrictEqual([7, 10, 18]);
     expect(mlr.predict([2, 3]).map(Math.round)).toStrictEqual([3, 8, 15]);
     expect(mlr.predict([4, 4]).map(Math.round)).toStrictEqual([7, 10, 18]);
+    expect(pcr.predict([2, 3]).map(Math.round)).toStrictEqual([3, 8, 15]);
+    expect(pcr.predict([4, 4]).map(Math.round)).toStrictEqual([7, 10, 18]);
   });
 
   it('Loadings data', () => {
     // Last argument refers to the weight that components must sum with each other (in percent) to perform the regression
-    const pcr = new PCR(predictor, response, { intercept: true, pcaWeight: 0.99 });
+    const pcr = new PCR(predictor, response, {
+      intercept: true,
+      pcaWeight: 0.99,
+    });
 
     const loadings = pcr.getLoadingsdata();
 

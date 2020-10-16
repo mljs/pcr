@@ -1,8 +1,8 @@
 'use strict';
 
 const matrixLib = require('ml-matrix');
-const MLR = require('ml-regression-multivariate-linear');
 const PCA = require('ml-pca').PCA;
+const MLR = require('ml-regression-multivariate-linear');
 
 const Matrix = matrixLib.Matrix;
 
@@ -16,104 +16,115 @@ const Matrix = matrixLib.Matrix;
 
 class PCR {
   constructor(predictor, response, options = {}) {
-    const { intercept = true, pcaWeight = 1 } = options;
+    const {
+      intercept = true,
+      pcaWeight = 1,
+      nComp = undefined,
+      scale = false,
+      center = true,
+    } = options;
+
     this.intercept = intercept;
-    if (intercept) {
-      this.intercept = intercept;
-    }
-    if (pcaWeight) {
-      this.pcaWeight = pcaWeight;
+    this.pcaWeight = pcaWeight;
+    let pca;
+
+    if (nComp) {
+      pca = new PCA(predictor, {
+        scale: scale,
+        center: center,
+        method: 'NIPALS',
+        nCompNIPALS: nComp,
+      });
     } else {
-      this.pcaWeight = 1;
+      pca = new PCA(predictor, { scale: scale, center: center });
     }
-    let pca = new PCA(predictor);
+
     let evalues = pca.getEigenvalues();
 
-    const sum = evalues.reduce((a, b) => a + b, 0);
-    const weight = evalues.map((x, i) => ({
-      weight: (x / sum) * 100,
-      evalues: evalues[i],
-      componentNumber: i + 1
+    const sum = evalues.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+    );
+
+    const weight = evalues.map((value, index) => ({
+      weight: value / sum,
+      evalues: evalues[index],
+      componentNumber: index + 1,
     }));
-    weight.sort((a, b) => a.weight < b.weight);
+
+    weight.sort((first, second) => first.weight < second.weight);
     let n = 0;
     let z = 0;
     let l = 0;
-    while (z < this.pcaWeight * 100) {
-      l = weight[n].weight;
-      n++;
-      z = z + l;
-    }
-    let predictorsMatrix = new Matrix(predictor);
 
-    const loadings = new Matrix(pca.getLoadings().data.slice(0, n));
-    this.loadingsData = loadings.map((x, i) => ({
-      weight: (evalues[i] / sum) * 100,
-      evalues: evalues[i],
-      componentNumber: i + 1,
-      component: pca.getLoadings().data.slice(i, i + 1)
-    }));
+    while (z < this.pcaWeight) {
+      l = weight[n].weight;
+      z += l;
+      n++;
+    }
+
+    let predictorsMatrix = new Matrix(predictor);
+    let responseMatrix = new Matrix(response);
+
+    const loadings = pca.getLoadings();
+    const selectedLoadings = loadings.subMatrixRow(
+      new Array(n).fill().map((value, index) => index),
+    );
+    this.loadingsData = new Array(selectedLoadings.rows)
+      .fill()
+      .map((value, index) => ({
+        weight: (evalues[index] / sum) * 100,
+        evalues: evalues[index],
+        componentNumber: index + 1,
+        component: loadings.getRow(index),
+      }));
+
     let scores = predictorsMatrix.mmul(loadings.transpose());
     this.scores = scores;
-    let responseMatrix = new Matrix(response);
-    const scoresLr = new MLR(scores, responseMatrix, {
-      intercept: this.intercept
-    });
-    const coefficientsMatrix = new Matrix(
-      scoresLr.toJSON().weights
-    ).transpose();
-    let load = loadings.transpose();
 
-    let g = [];
-    let h = [];
-    let coefficients = [];
-    for (let k = 0; k < coefficientsMatrix.length; k++) {
-      for (let i = 0; i < load.length; i++) {
-        for (let j = 0; j < load[0].length; j++) {
-          g.push(load[i][j] * coefficientsMatrix[k][j]);
-        }
-        h.push(g);
-        g = [];
-      }
-      coefficients.push(new Matrix(h).map((a) => a.reduce((a, b) => a + b)));
-      h = [];
-    }
+    const scoresLr = new MLR(scores, responseMatrix, {
+      intercept: this.intercept,
+    });
+
+    const coefficientsMatrix = new Matrix(
+      scoresLr.toJSON().weights,
+    ).transpose();
+    const coefficients = coefficientsMatrix
+      .subMatrixColumn(
+        new Array(coefficientsMatrix.columns - 1)
+          .fill()
+          .map((value, index) => index),
+      )
+      .mmul(loadings.transpose())
+      .transpose();
+
     if (this.intercept === true) {
-      for (let i = 0; i < coefficients.length; i++) {
-        coefficients[i].unshift(
-          coefficientsMatrix[i][coefficientsMatrix[0].length - 1]
-        );
-      }
+      coefficients.addRow(
+        0,
+        coefficientsMatrix.getColumn(coefficientsMatrix.rows - 1),
+      );
     }
-    let coefficientsData = new Matrix(coefficients);
-    this.coefficients = coefficientsData.transpose();
+
+    this.coefficients = coefficients;
 
     if (this.intercept === true) {
       predictorsMatrix.addColumn(0, new Array(predictor.length).fill(1));
     }
-    let yFittedValues = predictorsMatrix.mmul(coefficientsData.transpose());
+
+    let yFittedValues = predictorsMatrix.mmul(coefficients);
     this.yFittedValues = yFittedValues;
 
-    let residual = [];
-    for (let j = 0; j < response.length; j++) {
-      let g = [];
-      for (let k = 0; k < response[0].length; k++) {
-        g.push(response[j][k] - yFittedValues[j][k]);
-      }
-      residual.push(g);
-      g = [];
-    }
+    let residual = responseMatrix.sub(yFittedValues).to2DArray();
     this.residual = residual;
 
     let xMedia = [];
     xMedia = predictor.map(
-      (a) => a.reduce((a, b) => a + b, 0) / predictor[0].length
+      (a) => a.reduce((a, b) => a + b, 0) / predictor[0].length,
     );
     this.xMedia = xMedia;
 
     let yMedia = [];
     yMedia = response.map(
-      (a) => a.reduce((a, b) => a + b, 0) / response[0].length
+      (a) => a.reduce((a, b) => a + b, 0) / response[0].length,
     );
     this.yMedia = yMedia;
 
@@ -130,9 +141,9 @@ class PCR {
     let stdDeviationY = [];
     for (let i = 0; i < response.length; i++) {
       ssr.push(
-        yFittedValues[i]
+        yFittedValues.data[i]
           .map((x) => Math.pow(x - yMedia[i], 2))
-          .reduce((a, b) => a + b)
+          .reduce((a, b) => a + b),
       );
       yVariance.push(ssr[i] / (response[0].length - 1));
       stdDeviationY.push(Math.sqrt(yVariance[i]));
@@ -142,7 +153,9 @@ class PCR {
     this.yVariance = yVariance;
 
     let sse = [];
-    sse = residual.map((a) => a.map((x) => Math.pow(x, 2)).reduce((a, b) => a + b));
+    sse = residual.map((a) =>
+      a.map((x) => Math.pow(x, 2)).reduce((a, b) => a + b),
+    );
     this.sse = sse;
 
     let r2 = [];
@@ -158,7 +171,7 @@ class PCR {
         predictor[i]
           .map((x) => Math.pow(x - xMedia[i], 2))
           .reduce((a, b) => a + b) /
-          (predictor[0].length - 1)
+          (predictor[0].length - 1),
       );
       stdDeviationX[i] = Math.sqrt(xVariance[i]);
     }
@@ -176,7 +189,7 @@ class PCR {
       yVariance: this.yVariance,
       xVariance: this.xVariance,
       stdDeviationY: this.stdDeviationY,
-      stdDeviationX: this.stdDeviationX
+      stdDeviationX: this.stdDeviationX,
     };
     this.stat = Statistic;
   }
@@ -191,9 +204,9 @@ class PCR {
     if (this.intercept) {
       x.unshift(1);
     }
-    for (let i = 0; i < this.coefficients[0].length; i++) {
-      for (let j = 0; j < this.coefficients.length; j++) {
-        g.push(this.coefficients[j][i] * x[j]);
+    for (let i = 0; i < this.coefficients.columns; i++) {
+      for (let j = 0; j < this.coefficients.rows; j++) {
+        g.push(this.coefficients.get(j, i) * x[j]);
       }
       result[i] = g.reduce((a, b) => a + b);
       g = [];
