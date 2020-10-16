@@ -2,8 +2,6 @@
 
 Principal component regression.
 
-## API
-
 ### new PCR(x, y, {options})
 
 **Arguments**
@@ -48,8 +46,9 @@ console.log(pcr.getLoadingsdata()); // Returns the information of loadings used 
 */
 ```
 
+## References
+* Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry.
+* [Wikipedia](https://en.wikipedia.org/wiki/Principal_component_regression).
+
 ## License
 [MIT](./LICENSE)
-
-## References
-* 

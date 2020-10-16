@@ -10,7 +10,7 @@ import MLR from 'ml-regression-multivariate-linear';
  * @param {boolean} intercept - Intercept
  * */
 
-export class PCR {
+export default class PCR {
   constructor(predictor, response, options = {}) {
     const {
       intercept = true,
