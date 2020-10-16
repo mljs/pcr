@@ -1,10 +1,6 @@
-'use strict';
-
-const matrixLib = require('ml-matrix');
-const PCA = require('ml-pca').PCA;
-const MLR = require('ml-regression-multivariate-linear');
-
-const Matrix = matrixLib.Matrix;
+import Matrix from 'ml-matrix';
+import { PCA } from 'ml-pca';
+import MLR from 'ml-regression-multivariate-linear';
 
 /**
  * Creates new PCR (Principal component regression)
@@ -14,7 +10,7 @@ const Matrix = matrixLib.Matrix;
  * @param {boolean} intercept - Intercept
  * */
 
-class PCR {
+export class PCR {
   constructor(predictor, response, options = {}) {
     const {
       intercept = true,

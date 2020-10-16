@@ -27,12 +27,13 @@
     "name": "Javier Osorio"
   },
   "bugs": {},
-  "bundleDependencies": true,
   "jest": {
     "testEnvironment": "node"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "@babel/preset-env": "^7.12.1",
+    "babel-jest": "^26.5.2",
     "eslint": "^7.11.0",
     "eslint-config-cheminfo": "^5.2.2",
     "eslint-plugin-import": "^2.22.1",

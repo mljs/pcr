@@ -1,8 +1,6 @@
-'use strict';
+import MLR from 'ml-regression-multivariate-linear';
 
-const MLR = require('ml-regression-multivariate-linear');
-
-const PCR = require('..');
+import PCR from '..';
 
 // *******************************************
 // Example -->  Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry. pp(238-243)
