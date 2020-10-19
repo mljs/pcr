@@ -1,6 +1,6 @@
 {
   "name": "ml-pcr",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Principal Component Regression",
   "module": "src/pcr.js",
   "sideEffects": false,
