@@ -34,8 +34,6 @@
     "babel-jest": "^27.5.1",
     "eslint": "^8.10.0",
     "eslint-config-cheminfo": "^7.2.2",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jest": "^26.1.1",
     "jest": "^27.5.1",
     "prettier": "^2.5.1",
     "rollup": "^2.69.1"
