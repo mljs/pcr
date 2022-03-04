@@ -162,15 +162,15 @@ describe('principal component regression', () => {
 
     expect(loadings).toHaveLength(3);
     // First component eigenvalue and the weigth in the regression.
-    expect(Math.round(loadings[0].evalues)).toStrictEqual(210);
-    expect(Math.round(loadings[0].weight)).toStrictEqual(72);
+    expect(Math.round(loadings[0].evalues)).toBe(210);
+    expect(Math.round(loadings[0].weight)).toBe(72);
 
     // Second component eigenvalue and the weigth in the regression.
-    expect(Math.round(loadings[1].evalues)).toStrictEqual(74);
-    expect(Math.round(loadings[1].weight)).toStrictEqual(25);
+    expect(Math.round(loadings[1].evalues)).toBe(74);
+    expect(Math.round(loadings[1].weight)).toBe(25);
 
     // Third component eigenvalue and the weigth in the regression.
-    expect(Math.round(loadings[2].evalues)).toStrictEqual(5);
-    expect(Math.round(loadings[2].weight)).toStrictEqual(2);
+    expect(Math.round(loadings[2].evalues)).toBe(5);
+    expect(Math.round(loadings[2].weight)).toBe(2);
   });
 });
