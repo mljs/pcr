@@ -1,4 +1,4 @@
-import Matrix from 'ml-matrix';
+import { Matrix } from 'ml-matrix';
 import { PCA } from 'ml-pca';
 import MLR from 'ml-regression-multivariate-linear';
 
@@ -250,4 +250,3 @@ export default class PCR {
     return this.scores;
   }
 }
-module.exports = PCR;
