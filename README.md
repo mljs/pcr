@@ -14,12 +14,21 @@ Principal component regression.
 ## Usage
 
 ```js
+const { PCR } = require('pcr');
 
-const PCR = require('pcr');
+const x = [
+  [0, 0],
+  [1, 2],
+  [2, 3],
+  [3, 4],
+];
 
-const x = [[0, 0], [1, 2], [2, 3], [3, 4]];
-
-const y = [[0, 0, 0], [2, 4, 3], [4, 6, 5], [6, 8, 7]];
+const y = [
+  [0, 0, 0],
+  [2, 4, 3],
+  [4, 6, 5],
+  [6, 8, 7],
+];
 
 const pcr = new PCR(x, y, { intercept: true, weight: 1 });
 console.log(pcr.predict([3, 3])); // Predict Y for an given X
@@ -44,11 +53,13 @@ console.log(pcr.getLoadingsdata()); // Returns the information of loadings used 
 ```
 
 ## References
-* Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry.
 
-* [Wikipedia](https://en.wikipedia.org/wiki/Principal_component_regression).
+- Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry.
+
+- [Wikipedia](https://en.wikipedia.org/wiki/Principal_component_regression).
 
 ## License
+
 [MIT](./LICENSE)
 
 [npm-image]: https://img.shields.io/npm/v/ml-pcr.svg
