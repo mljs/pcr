@@ -28,7 +28,7 @@ export class PCR {
   constructor(
     predictor: number[][] | Matrix,
     response: number[][] | Matrix,
-    options: Options = {},
+    options: PCROptions = {},
   ) {
     const {
       intercept = true,
@@ -250,7 +250,7 @@ export class PCR {
   }
 }
 
-export interface Options {
+export interface PCROptions {
   intercept?: boolean;
   pcaWeight?: number;
   nComp?: number;
