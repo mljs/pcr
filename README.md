@@ -2,17 +2,14 @@
 
 Principal component regression.
 
-### new PCR(x, y, {options})
+[![NPM version][npm-image]][npm-url]
+[![build status][ci-image]][ci-url]
+[![Test coverage][codecov-image]][codecov-url]
+[![npm download][download-image]][download-url]
 
-**Arguments**
+## Installation
 
-* `x`: Matrix containing the inputs.
-* `y`: Matrix containing the outputs.
-
-**Options**
-
-* `intercept`: boolean indicating if intercept terms should be computed.
-* `weight`: number (0 - 1): It refers to the weight that components must sum with each otherto perform the regression. When this is exactly 1, pcr perform a multiple linear regression.
+`$ npm install ml-pcr`
 
 ## Usage
 
@@ -53,3 +50,12 @@ console.log(pcr.getLoadingsdata()); // Returns the information of loadings used 
 
 ## License
 [MIT](./LICENSE)
+
+[npm-image]: https://img.shields.io/npm/v/ml-pcr.svg
+[npm-url]: https://npmjs.org/package/ml-pcr
+[ci-image]: https://github.com/mljs/pcr/workflows/Node.js%20CI/badge.svg?branch=master
+[ci-url]: https://github.com/mljs/pcr/actions?query=workflow%3A%22Node.js+CI%22
+[codecov-image]: https://img.shields.io/codecov/c/github/mljs/ml-pcr.svg
+[codecov-url]: https://codecov.io/gh/mljs/ml-pcr
+[download-image]: https://img.shields.io/npm/dm/ml-pcr.svg
+[download-url]: https://npmjs.org/package/ml-pcr
