@@ -1,6 +1,6 @@
 import MLR from 'ml-regression-multivariate-linear';
 
-import PCR from '../pcr';
+import { PCR } from '../pcr';
 
 // *******************************************
 // Example -->  Miller, J. N., & Miller, J. C. (2010). Statistics and Chemometrics for Analytical Chemistry. pp(238-243)

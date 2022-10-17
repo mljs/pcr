@@ -10,12 +10,30 @@ import MLR from 'ml-regression-multivariate-linear';
  * @param {boolean} intercept - Intercept
  * */
 
-export default class PCR {
-  constructor(predictor, response, options = {}) {
+export class PCR {
+  intercept: boolean;
+  pcaWeight: number;
+  loadingsData: {
+    weight: number;
+    evalues: number;
+    componentNumber: number;
+    component: number[];
+  }[];
+  scores: Matrix;
+  coefficients: Matrix;
+  yFittedValues: Matrix;
+  xMedia?: number[];
+  statistics: Statistics;
+
+  constructor(
+    predictor: number[][] | Matrix,
+    response: number[][] | Matrix,
+    options: Options = {},
+  ) {
     const {
       intercept = true,
       pcaWeight = 1,
-      nComp = undefined,
+      nComp = 0,
       scale = false,
       center = true,
     } = options;
@@ -26,13 +44,13 @@ export default class PCR {
 
     if (nComp) {
       pca = new PCA(predictor, {
-        scale: scale,
-        center: center,
+        scale,
+        center,
         method: 'NIPALS',
         nCompNIPALS: nComp,
       });
     } else {
-      pca = new PCA(predictor, { scale: scale, center: center });
+      pca = new PCA(predictor, { scale, center });
     }
 
     let evalues = pca.getEigenvalues();
@@ -47,27 +65,27 @@ export default class PCR {
       componentNumber: index + 1,
     }));
 
-    weight.sort((first, second) => first.weight < second.weight);
+    weight.sort((first, second) => first.weight + second.weight);
+
     let n = 0;
     let z = 0;
     let l = 0;
-
     while (z < this.pcaWeight) {
       l = weight[n].weight;
       z += l;
       n++;
     }
 
-    let predictorsMatrix = new Matrix(predictor);
-    let responseMatrix = new Matrix(response);
+    let predictorsMatrix = Matrix.checkMatrix(predictor);
+    let responseMatrix = Matrix.checkMatrix(response);
 
     const loadings = pca.getLoadings();
     const selectedLoadings = loadings.subMatrixRow(
-      new Array(n).fill().map((value, index) => index),
+      new Array(n).fill(0).map((_, index) => index),
     );
     this.loadingsData = new Array(selectedLoadings.rows)
-      .fill()
-      .map((value, index) => ({
+      .fill(0)
+      .map((_, index) => ({
         weight: (evalues[index] / sum) * 100,
         evalues: evalues[index],
         componentNumber: index + 1,
@@ -77,124 +95,105 @@ export default class PCR {
     let scores = predictorsMatrix.mmul(loadings.transpose());
     this.scores = scores;
 
-    const scoresLr = new MLR(scores, responseMatrix, {
+    const regressionScores = new MLR(scores, responseMatrix, {
       intercept: this.intercept,
     });
 
-    const coefficientsMatrix = new Matrix(
-      scoresLr.toJSON().weights,
-    ).transpose();
+    const coefficientsMatrix = new Matrix(regressionScores.weights).transpose();
     const coefficients = coefficientsMatrix
       .subMatrixColumn(
         new Array(coefficientsMatrix.columns - 1)
-          .fill()
-          .map((value, index) => index),
+          .fill(0)
+          .map((_, index) => index),
       )
       .mmul(loadings.transpose())
       .transpose();
 
-    if (this.intercept === true) {
+    if (this.intercept) {
       coefficients.addRow(
         0,
         coefficientsMatrix.getColumn(coefficientsMatrix.rows - 1),
       );
+      predictorsMatrix.addColumn(0, new Array(predictorsMatrix.rows).fill(1));
     }
 
     this.coefficients = coefficients;
-
-    if (this.intercept === true) {
-      predictorsMatrix.addColumn(0, new Array(predictor.length).fill(1));
-    }
 
     let yFittedValues = predictorsMatrix.mmul(coefficients);
     this.yFittedValues = yFittedValues;
 
     let residual = responseMatrix.sub(yFittedValues).to2DArray();
-    this.residual = residual;
 
-    let xMedia = [];
-    xMedia = predictor.map(
-      (a) => a.reduce((a, b) => a + b, 0) / predictor[0].length,
-    );
-    this.xMedia = xMedia;
+    let xMedia = predictorsMatrix.mean('row');
 
-    let yMedia = [];
-    yMedia = response.map(
-      (a) => a.reduce((a, b) => a + b, 0) / response[0].length,
-    );
-    this.yMedia = yMedia;
+    let yMedia = responseMatrix.mean('row');
 
     let sst = [];
-    for (let i = 0; i < response.length; i++) {
-      sst[i] = response[i]
+    for (let i = 0; i < responseMatrix.rows; i++) {
+      sst[i] = responseMatrix
+        .getRow(i)
         .map((x) => Math.pow(x - yMedia[i], 2))
         .reduce((a, b) => a + b);
     }
-    this.sst = sst;
 
     let ssr = [];
     let yVariance = [];
     let stdDeviationY = [];
-    for (let i = 0; i < response.length; i++) {
+    for (let i = 0; i < responseMatrix.rows; i++) {
       ssr.push(
-        yFittedValues.data[i]
+        yFittedValues
+          .getRow(i)
           .map((x) => Math.pow(x - yMedia[i], 2))
           .reduce((a, b) => a + b),
       );
-      yVariance.push(ssr[i] / (response[0].length - 1));
+      yVariance.push(ssr[i] / (responseMatrix.columns - 1));
       stdDeviationY.push(Math.sqrt(yVariance[i]));
     }
-    this.ssr = ssr;
-    this.stdDeviationY = stdDeviationY;
-    this.yVariance = yVariance;
 
     let sse = [];
     sse = residual.map((a) =>
       a.map((x) => Math.pow(x, 2)).reduce((a, b) => a + b),
     );
-    this.sse = sse;
 
     let r2 = [];
     for (let i = 0; i < ssr.length; i++) {
       r2.push(ssr[i] / sst[i]);
     }
-    this.r2 = r2;
 
     let xVariance = [];
     let stdDeviationX = [];
-    for (let i = 0; i < predictor.length; i++) {
+    for (let i = 0; i < predictorsMatrix.rows; i++) {
       xVariance.push(
-        predictor[i]
+        predictorsMatrix
+          .getRow(i)
           .map((x) => Math.pow(x - xMedia[i], 2))
           .reduce((a, b) => a + b) /
-          (predictor[0].length - 1),
+          (predictorsMatrix.columns - 1),
       );
       stdDeviationX[i] = Math.sqrt(xVariance[i]);
     }
-    this.xVariance = xVariance;
-    this.stdDeviationX = stdDeviationX;
 
     let Statistic = {
-      residuals: this.residual,
-      yMedia: this.yMedia,
-      xMedia: this.xMedia,
-      SST: this.sst,
-      SSR: this.ssr,
-      SSE: this.sse,
-      R2: this.r2,
-      yVariance: this.yVariance,
-      xVariance: this.xVariance,
-      stdDeviationY: this.stdDeviationY,
-      stdDeviationX: this.stdDeviationX,
+      residual,
+      yMedia,
+      xMedia,
+      SST: sst,
+      SSR: ssr,
+      SSE: sse,
+      R2: r2,
+      yVariance,
+      xVariance,
+      stdDeviationY,
+      stdDeviationX,
     };
-    this.stat = Statistic;
+    this.statistics = Statistic;
   }
 
   /**
    * Predict y-values for a given x
    * @returns {[Array]}
    */
-  predict(x) {
+  predict(x: number[]) {
     const result = [];
     let g = [];
     if (this.intercept) {
@@ -215,7 +214,7 @@ export default class PCR {
    * @returns {[Array]}
    */
   getStatistic() {
-    return this.stat;
+    return this.statistics;
   }
 
   /**
@@ -249,4 +248,26 @@ export default class PCR {
   getScores() {
     return this.scores;
   }
+}
+
+export interface Options {
+  intercept?: boolean;
+  pcaWeight?: number;
+  nComp?: number;
+  scale?: boolean;
+  center?: boolean;
+}
+
+export interface Statistics {
+  residual: number[][];
+  yMedia: number[];
+  xMedia?: number[];
+  SST: number[];
+  SSR: number[];
+  SSE: number[];
+  R2: number[];
+  yVariance: number[];
+  xVariance: number[];
+  stdDeviationY: number[];
+  stdDeviationX: number[];
 }
